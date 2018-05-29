@@ -7,8 +7,8 @@
     <ProjectGuid>{BE68FFC0-3741-46B5-B447-6A6B61671F6C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SavingIsForPuppies</RootNamespace>
-    <AssemblyName>SavingIsForPuppies</AssemblyName>
+    <RootNamespace>nl.flukeyfiddler.bt.SavingIsForPansies</RootNamespace>
+    <AssemblyName>SavingIsForPansies</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Build\SavingIsForPuppies\</OutputPath>
+    <OutputPath>..\Build\SavingIsForPansies\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -59,8 +59,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Settings.cs" />
+    <Compile Include="Util\Logger.cs" />
     <Compile Include="Patches.cs" />
-    <Compile Include="SavingIsForPuppies.cs" />
+    <Compile Include="SavingIsForPansies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
