@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace nl.flukeyfiddler.bt.SavingIsForPansies.Util
+namespace nl.flukeyfiddler.bt.IronMechMode.Util
 {
     public class ModSettings
     {

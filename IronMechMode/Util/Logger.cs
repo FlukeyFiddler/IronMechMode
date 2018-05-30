@@ -1,7 +1,7 @@
 ﻿using nl.flukeyfiddler.bt.Utils;
 using System;
 
-namespace nl.flukeyfiddler.bt.SavingIsForPansies.Util
+namespace nl.flukeyfiddler.bt.IronMechMode.Util
 {
     static class Logger
     {

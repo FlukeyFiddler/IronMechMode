@@ -1,8 +1,8 @@
 ﻿using BattleTech.UI;
 using Harmony;
-using nl.flukeyfiddler.bt.SavingIsForPansies.Util;
+using nl.flukeyfiddler.bt.IronMechMode.Util;
 
-namespace nl.flukeyfiddler.bt.SavingIsForPuppies
+namespace nl.flukeyfiddler.bt.IronMechMode
 {
     [HarmonyPatch(typeof(MainMenu), "HandleEscapeKeypress")]
     public class MainMenu_HandleEscapeKeyPress_Patch

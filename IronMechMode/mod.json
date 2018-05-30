@@ -1,12 +1,12 @@
 ﻿{
-    "Name": "SavingIsForPansies",
+    "Name": "IronMechMode",
     "Enabled": true,
 
     "Version": "0.1.0",
     "Description": "Saving is not a given!",
     "Author": "FlukeyFiddler",
-    "Website": "http://www.github.com/FlukeyFiddler/SavingIsForPuppies",
-    "DLL": "SavingIsForPansies.dll",
+    "Website": "http://www.github.com/FlukeyFiddler/IronMechMode",
+    "DLL": "IronMechMode.dll",
     "Settings": {
         "MaxManualReloadsPerGame": 0
     }
