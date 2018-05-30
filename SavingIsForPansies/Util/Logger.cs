@@ -1,30 +1,25 @@
-﻿using System;
-using System.IO;
+﻿using nl.flukeyfiddler.bt.Utils;
+using System;
 
-namespace nl.flukeyfiddler.bt.SavingIsForPansies
+namespace nl.flukeyfiddler.bt.SavingIsForPansies.Util
 {
-    public static class Logger
+    static class Logger
     {
-        const string LOG_FILE_PATH = "mods\\SavingIsForPansies\\log.txt";
+        private static LogFilePath _logFilePath;
+        
+        public static void SetLogFilePath(LogFilePath LogFilePath)
+        {
+            _logFilePath = LogFilePath;
+        }
 
         public static void LogError(Exception ex)
         {
-            using (StreamWriter writer = new StreamWriter(LOG_FILE_PATH, true))
-            {
-                writer.WriteLine("Message :" + ex.Message + "<br/>" + Environment.NewLine + "StackTrace :" + ex.StackTrace +
-                   "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
-                writer.WriteLine(Environment.NewLine + "-----------------------------------------------------------------------------" + Environment.NewLine);
-            }
+            LoggerUtil.LogError(_logFilePath, ex);
         }
 
         public static void LogLine(string line)
         {
-            using (StreamWriter writer = new StreamWriter(LOG_FILE_PATH, true))
-            {
-                writer.WriteLine(line + Environment.NewLine + "Date :" + DateTime.Now.ToString());
-                writer.WriteLine(Environment.NewLine + "-----------------------------------------------------------------------------" + Environment.NewLine);
-            }
-        }
-
+            LoggerUtil.LogLine(_logFilePath, line);
+        }       
     }
 }

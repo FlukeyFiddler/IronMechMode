@@ -1,6 +1,6 @@
 ﻿using BattleTech.UI;
 using Harmony;
-using nl.flukeyfiddler.bt.Utils;
+using nl.flukeyfiddler.bt.SavingIsForPansies.Util;
 
 namespace nl.flukeyfiddler.bt.SavingIsForPuppies
 {
