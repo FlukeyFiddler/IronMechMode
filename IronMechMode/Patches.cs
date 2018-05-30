@@ -1,15 +1,17 @@
-﻿using BattleTech.UI;
+﻿using BattleTech;
+using BattleTech.UI;
 using Harmony;
 using nl.flukeyfiddler.bt.IronMechMode.Util;
 
 namespace nl.flukeyfiddler.bt.IronMechMode
 {
-    [HarmonyPatch(typeof(MainMenu), "HandleEscapeKeypress")]
-    public class MainMenu_HandleEscapeKeyPress_Patch
+    [HarmonyPatch(typeof(GameInstance), "CanSave")]
+    public class GameInstance_CanSave_Patch
     {
-        public static void Postfix(MainMenu __instance)
+        public static void Postfix(GameInstance __instance, ref bool __result)
         {
-            Logger.LogLine("It works");
+            Logger.LogLine("in postfix");
+            //__result = false;
         }
     }
 }
