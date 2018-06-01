@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using BattleTech.Save.SaveGameStructure;
+using Newtonsoft.Json;
 using System;
 
 namespace nl.flukeyfiddler.bt.IronMechMode.Util
 {
     public class ModSettings
     {
+        public const SaveReason COMBAT_SAVE_REASON = SaveReason.COMBAT_GAME_DESIGNER_TRIGGER;
+
         internal static Settings settings = new Settings();
 
         public static void UpdateSettingsFromJSON(string settingsJSON)

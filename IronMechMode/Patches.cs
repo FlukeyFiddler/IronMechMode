@@ -10,10 +10,18 @@ namespace nl.flukeyfiddler.bt.IronMechMode
     {
         static void Postfix(GameInstance __instance, ref bool __result, SaveReason reason)
         {
-            if (reason == SaveReason.COMBAT_SIM_STORY_MISSION_RESTART)
+            if (reason == SaveReason.COMBAT_SIM_STORY_MISSION_RESTART
+                || reason == SaveReason.MANUAL)
             {
                 __result = false;
             }
+
+
+            if(reason == ModSettings.COMBAT_SAVE_REASON)
+            {
+                __result = true;
+            }
+
         }
     }
 
