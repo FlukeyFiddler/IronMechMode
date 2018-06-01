@@ -20,6 +20,11 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util
         public static void LogLine(string line)
         {
             LoggerUtil.LogLine(_logFilePath, line);
-        }       
+        }
+
+        public static void LogMinimal(string line)
+        {
+            LoggerUtil.LogMinimal(_logFilePath, line);
+        }
     }
 }
