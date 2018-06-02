@@ -27,6 +27,8 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util
         internal class Settings
         {
             public int MaxManualReloadsPerGame = 2;
+            // MAX_SIM_GAME_SAVES
+            // MAX_COMBAT_GAME_SAVES
         }
     }
 }

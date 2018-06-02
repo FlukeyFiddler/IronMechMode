@@ -1,16 +1,9 @@
 ﻿using BattleTech;
-using BattleTech.DataObjects;
-using BattleTech.Save;
 using BattleTech.Save.SaveGameStructure;
-using BattleTech.Serialization;
-using BattleTech.Serialization.Handlers;
-using BattleTech.Serialization.Models;
-using BattleTech.Serialization.Utility;
 using BattleTech.UI;
 using Harmony;
 using nl.flukeyfiddler.bt.IronMechMode.Util;
-using System;
-using System.Collections.Generic;
+using System.Reflection;
 
 namespace nl.flukeyfiddler.bt.IronMechMode
 {
@@ -20,7 +13,23 @@ namespace nl.flukeyfiddler.bt.IronMechMode
         public static void Postfix(MainMenu __instance)
         {
             Logger.LogLine("It works");
-            //Logger.LogLine(GameInstanceSave.SaveReason.ToString());
+        }
+    }
+
+    [HarmonyPatch(typeof(GameInstance), "Save")]
+    public class GameInstance_Save_Patch
+    {
+        static void Prefix(GameInstance __instance, SaveReason reason)
+        {
+            MethodBase curr = MethodBase.GetCurrentMethod();
+            string[] debugLines = new string[]
+            {
+                "Trying to save",
+                "saveReason: " + reason,
+                "canSave: " + __instance.CanSave(reason, false),
+            };
+            Logger.LogBlock(debugLines, MethodBase.GetCurrentMethod());
+            Logger.LogBlock(debugLines);
         }
     }
 }

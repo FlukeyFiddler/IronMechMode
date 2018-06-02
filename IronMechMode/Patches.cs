@@ -8,6 +8,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode
     [HarmonyPatch(typeof(GameInstance), "CanSave")]
     public class GameInstance_CanSave_Patch
     {
+        // This thing gets called 40*/s, maybe want to overide something lower
         static void Postfix(GameInstance __instance, ref bool __result, SaveReason reason)
         {
             if (reason == SaveReason.COMBAT_SIM_STORY_MISSION_RESTART
@@ -21,7 +22,6 @@ namespace nl.flukeyfiddler.bt.IronMechMode
             {
                 __result = true;
             }
-
         }
     }
 
