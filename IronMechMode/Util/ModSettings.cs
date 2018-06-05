@@ -19,7 +19,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex);
+                Logger.Error(ex);
                 settings = new Settings();
             }
         }

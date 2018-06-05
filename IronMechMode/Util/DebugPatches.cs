@@ -2,36 +2,36 @@
 using BattleTech.Save.SaveGameStructure;
 using BattleTech.UI;
 using Harmony;
-using nl.flukeyfiddler.bt.IronMechMode.Util;
-using System.Reflection;
 
-namespace nl.flukeyfiddler.bt.IronMechMode
+namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
 {
     [HarmonyPatch(typeof(MainMenu), "HandleEscapeKeypress")]
-    public class MainMenu_HandleEscapeKeyPress_Patch
+    public class MainMenu_HandleEscapeKeyPress_Patch_Debug
     {
         public static void Postfix(MainMenu __instance)
         {
-            Logger.LogLine("It works");
+            
         }
     }
 
-    [HarmonyPatch(typeof(GameInstance), "Save")]
-    public class GameInstance_Save_Patch
+    [HarmonyPatch(typeof(GameInstance), "CanSave")]
+    public class GameInstance_Save_Patch_Debug
     {
-        static void Prefix(GameInstance __instance, SaveReason reason)
+        static void Postfix(GameInstance __instance, SaveReason reason)
         {
-            MethodBase curr = MethodBase.GetCurrentMethod();
-            string[] debugLines = new string[]
-            {
-                "Trying to save",
-                "saveReason: " + reason,
-                "canSave: " + __instance.CanSave(reason, false),
-            };
-            Logger.LogBlock(debugLines, MethodBase.GetCurrentMethod());
-            Logger.LogBlock(debugLines);
+            DebugHelper.LogGameInstanceCanSave(__instance, reason);
         }
     }
+    
+    [HarmonyPatch(typeof(CombatGameState), "CanSave")]
+    public class CombatGameState_Save_Patch_Debug
+    {
+        static void Postfix(CombatGameState __instance)
+        {
+            DebugHelper.LogCombatGameStateCanSave(__instance);
+        }
+    }
+    
 }
 
 
