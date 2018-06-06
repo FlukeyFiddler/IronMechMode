@@ -1,5 +1,6 @@
 ﻿using BattleTech;
 using BattleTech.Save.SaveGameStructure;
+using Harmony;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -37,6 +38,14 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
                 "sum of flag2 && flag && !flag3 && !isTutorial: " + (flag2 && flag && !flag3 && !isTutorial)
             };
             Logger.Block(lines, MethodBase.GetCurrentMethod());
+
+            
+            if (flag2 == false)
+            {
+                Logger.Minimal("flag 2 (stackmanager) is false");
+                LogStackManagerCanSave(__instance.StackManager);
+            }
+            
         }
 
        
@@ -67,5 +76,43 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
             Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
         }
         
+        public static void LogStackManagerCanSave(StackManager stackmanager)
+        {
+            List<IStackSequence> SequenceStack = Traverse.Create(stackmanager).Property("SequenceStack").GetValue<List<IStackSequence>>();
+            List<IStackSequence> ParallelStack = Traverse.Create(stackmanager).Property("ParallelStack").GetValue<List<IStackSequence>>();
+
+            List<string> debugLines = new List<string>();
+            debugLines.Add("stackManagerSequenceStackCount (should be 2): " + SequenceStack.Count);
+            
+            if(SequenceStack != null)
+            {
+                foreach(IStackSequence sequence in SequenceStack)
+                {
+                    debugLines.Add("SequenceStack messageIndex: " + sequence.MessageIndex);
+                    debugLines.Add("Desired Parent Name" + sequence.DesiredParentType.FullName);
+                }
+            }
+            else
+            {
+                Logger.Minimal("SequensceStack is null!");
+            }
+
+            if(ParallelStack != null)
+            {
+                foreach (IStackSequence sequence in ParallelStack)
+                {
+                    debugLines.Add("ParallelStack messageIndex: " + sequence.MessageIndex);
+                    debugLines.Add("Desired Parent Name" + sequence.DesiredParentType.FullName);
+                }
+            }
+            else
+            {
+                Logger.Minimal("ParallelStack is null!");
+            }
+
+            Logger.Minimal("about to spit it out from LogStackManagerCanSave");
+            
+            Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
+        }
     }
 }

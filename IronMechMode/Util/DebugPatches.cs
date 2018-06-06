@@ -2,6 +2,7 @@
 using BattleTech.Save.SaveGameStructure;
 using BattleTech.UI;
 using Harmony;
+using System.Collections.Generic;
 
 namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
 {
@@ -17,21 +18,26 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
     [HarmonyPatch(typeof(GameInstance), "CanSave")]
     public class GameInstance_Save_Patch_Debug
     {
-        static void Postfix(GameInstance __instance, SaveReason reason)
+        static void Postfix(GameInstance __instance, SaveReason reason, bool __result)
         {
-            DebugHelper.LogGameInstanceCanSave(__instance, reason);
+            if (!__result)
+            {
+                DebugHelper.LogGameInstanceCanSave(__instance, reason);
+            }
         }
     }
     
     [HarmonyPatch(typeof(CombatGameState), "CanSave")]
     public class CombatGameState_Save_Patch_Debug
     {
-        static void Postfix(CombatGameState __instance)
+        static void Postfix(CombatGameState __instance, bool __result)
         {
-            DebugHelper.LogCombatGameStateCanSave(__instance);
+            if(!__result)
+            {
+                DebugHelper.LogCombatGameStateCanSave(__instance);
+            }
         }
     }
-    
 }
 
 

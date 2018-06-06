@@ -1,5 +1,6 @@
 ﻿using BattleTech;
 using BattleTech.Save.SaveGameStructure;
+using BattleTech.UI;
 using Harmony;
 using nl.flukeyfiddler.bt.IronMechMode.Util;
 using nl.flukeyfiddler.bt.IronMechMode.Util.Debug;
@@ -16,11 +17,11 @@ namespace nl.flukeyfiddler.bt.IronMechMode
         {
             if (reason == SaveReason.MANUAL)
             {
-                __result = false;
+                //__result = false;
             }           
         }
     }
-    /*
+    
     [HarmonyPatch(typeof(CombatGameState), "_Init")]
     public class CombatGameState_Init_Patch
     {
@@ -46,11 +47,24 @@ namespace nl.flukeyfiddler.bt.IronMechMode
 
             if (turnActorActivateMessage.TurnActorGUID == combatGameState.LocalPlayerTeamGuid)
             {
-               combatGameState.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
+                //combatGameState.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
+              //  UnityGameInstance.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
             }
         }
     }
+    
+
+    /*
+    [HarmonyPatch(typeof(TurnEventNotification), "ShowPlayerTeamNotify")]
+    public class TurnEventNotification_ShowPlayerTeamNotify_Patch
+    {
+        private static void Postfix(CombatGameState ___Combat)
+        {
+            //___Combat.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
+        }
+    }
     */
+
     [HarmonyPatch(typeof(TurnDirector), "EndCurrentRound")]
     public class TurnDirector_EndCurrentRound_Patch
     {
@@ -59,7 +73,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode
             //if (__instance.Combat.CanSave(false))
             //{
                 // Hmm this doesn't save in combat but does after it
-            __instance.Combat.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
+           // __instance.Combat.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
             //}
 
         }
