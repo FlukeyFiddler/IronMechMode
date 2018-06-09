@@ -5,6 +5,7 @@ using Harmony;
 using nl.flukeyfiddler.bt.IronMechMode.Util;
 using nl.flukeyfiddler.bt.IronMechMode.Util.Debug;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace nl.flukeyfiddler.bt.IronMechMode
@@ -12,90 +13,72 @@ namespace nl.flukeyfiddler.bt.IronMechMode
     [HarmonyPatch(typeof(GameInstance), "CanSave")]
     public class GameInstance_CanSave_Patch
     {
-        // This thing gets called 40*/s, maybe want to overide something lower
         static void Postfix(GameInstance __instance, ref bool __result, SaveReason reason)
         {
             if (reason == SaveReason.MANUAL)
             {
-                //__result = false;
+                __result = false;
             }           
         }
     }
-    
-    [HarmonyPatch(typeof(CombatGameState), "_Init")]
-    public class CombatGameState_Init_Patch
+
+   [HarmonyPatch(typeof(TurnDirector), "IncrementActiveTurnActor")]
+   public static class TurnDirector_IncrementActiveTurnActor_Patch
     {
-        private static CombatGameState combatGameState;
+        public static int lastRound = 0;
 
-        private static void Postfix(CombatGameState __instance)
+        public static void SetRound(int currentRound)
         {
-            combatGameState = __instance;
-
-            Logger.Line("TODO: test that this subscriber does not need to be destroyed on " +
-                "OnCombatGameDestroyed", MethodBase.GetCurrentMethod());
-
-            // Alas MessageCenterMessageType.OnRoundBeginComplete doesn't seem to be implemented
-            // Grr neither OnPhaseBeginComplete
-            __instance.MessageCenter.AddSubscriber(MessageCenterMessageType.OnTurnActorActivate,
-                new ReceiveMessageCenterMessage(OnTurnActorActivateMessage));
+            lastRound = currentRound;
         }
-        //  new ReceiveMessageCenterMessage(OnTurnActorActivateMessage)
-        //  PhaseBeginCompleteMessage(int round, int phase, string TurnActorGUID, int available)
-        public static void OnTurnActorActivateMessage(MessageCenterMessage message)
-        {
-            TurnActorActivateMessage turnActorActivateMessage = message as TurnActorActivateMessage;
 
-            if (turnActorActivateMessage.TurnActorGUID == combatGameState.LocalPlayerTeamGuid)
+        private static void Postfix(TurnDirector __instance)
+        {
+            /*
+            bool newRoundInBattle = __instance.CurrentPhase == __instance.FirstPhase;
+            // When not in a battle, the currentPhase is always 5 while first is 1
+            bool newRoundOutsideOfBattle = __instance.CurrentPhase == __instance.LastPhase;
+           */
+            bool playerTeamTurn = __instance.ActiveTurnActor.GUID == __instance.Combat.LocalPlayerTeamGuid;
+
+            if (playerTeamTurn && __instance.CurrentRound > lastRound)
             {
-                //combatGameState.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
-              //  UnityGameInstance.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
+                __instance.Combat.BattleTechGame.Save(ModSettings.COMBAT_AUTOSAVE_REASON, false);
+                SetRound(__instance.CurrentRound);
             }
         }
     }
-    
 
-    /*
-    [HarmonyPatch(typeof(TurnEventNotification), "ShowPlayerTeamNotify")]
-    public class TurnEventNotification_ShowPlayerTeamNotify_Patch
-    {
-        private static void Postfix(CombatGameState ___Combat)
-        {
-            //___Combat.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
-        }
-    }
-    */
-
-    [HarmonyPatch(typeof(TurnDirector), "EndCurrentRound")]
-    public class TurnDirector_EndCurrentRound_Patch
-    {
-        static void Postfix(TurnDirector __instance)
-        {
-            //if (__instance.Combat.CanSave(false))
-            //{
-                // Hmm this doesn't save in combat but does after it
-           // __instance.Combat.BattleTechGame.Save(SaveReason.COMBAT_GAME_DESIGNER_TRIGGER, false);
-            //}
-
-        }
-    }
-    
     [HarmonyPatch(typeof(SlotModel), "_GetDisplayText")]
     public class  SlotModel_GetDisplayText_Patch
     {
-        static void Postfix(SlotModel __instance, ref string __result)
+        static bool Prefix(SlotModel __instance, ref string __result)
         {
             string debugSaveReason = __instance.SaveReason.ToString();
-            //__result = "IronMechMode" + "_" + debugSaveReason;
-            //return false;
+            __result = __instance.SaveReason.ToString();
+            return false;
         }
     }
 
-    [HarmonyPatch(typeof(SlotGrouping), "set_MaxSaves")]
-    public class SlotGrouping_set_MaxSaves_Patch
+    [HarmonyPatch(typeof(ReasonToSlotGroupMapping), "GetSlotGroup")]
+    public class ReasonToSlotGroupMapping_GetSlotGroup_Patch
     {
-        public static void Prefix(ref int value)
+        static void Prefix(SaveReason reason, ref Dictionary<SaveReason, SlotGroup> ___mapping)
         {
-            value = 4;
+            foreach(KeyValuePair<SaveReason, SlotGroup> _override in ModSettings.modAutosaveMapping)
+            {
+                ___mapping[_override.Key] = _override.Value;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(SlotGroupingParametersMapping), "GetSlotGroupings")]
+    public class SlotGroupingParametersMapping_Patch
+    {
+        public static void Postfix(ref Dictionary<SlotGroup, SlotGrouping> __result)
+        {
+            __result[ModSettings.AUTOSAVES_GROUP] = new SlotGrouping(ModSettings.settings.MaxAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
+            __result[ModSettings.CHECKPOINTSAVES_GROUP] = new SlotGrouping(ModSettings.settings.MaxCheckpointSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
         }
     }
 }

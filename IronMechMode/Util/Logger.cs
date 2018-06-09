@@ -23,6 +23,16 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util
             LoggerUtil.Line(logFilePath, line, caller);
         }
 
+        public static void InfoLine(MethodBase caller = null)
+        {
+            LoggerUtil.InfoLine(logFilePath, caller);
+        }
+
+        public static void EndLine()
+        {
+            LoggerUtil.EndLine(logFilePath);
+        }
+
         public static void Minimal(string line)
         {
             LoggerUtil.Minimal(logFilePath, line);

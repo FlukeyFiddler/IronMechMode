@@ -8,6 +8,6 @@
     "Website": "http://www.github.com/FlukeyFiddler/IronMechMode",
     "DLL": "IronMechMode.dll",
     "Settings": {
-        "MaxManualReloadsPerGame": 0
+        "MaxManualReloadsPerGame": 4
     }
 }

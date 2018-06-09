@@ -3,6 +3,7 @@ using BattleTech.Save.SaveGameStructure;
 using BattleTech.UI;
 using Harmony;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
 {
@@ -22,7 +23,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
         {
             if (!__result)
             {
-                DebugHelper.LogGameInstanceCanSave(__instance, reason);
+               // DebugHelper.LogGameInstanceCanSave(__instance, reason);
             }
         }
     }
@@ -35,6 +36,41 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
             if(!__result)
             {
                 DebugHelper.LogCombatGameStateCanSave(__instance);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(ReasonToSlotGroupMapping), "GetSlotGroup")]
+    public class ReasonToSlotGroupMapping_GetSlotGroup_Patch_Debug
+    {
+        public static void Postfix(SaveReason reason, SlotGroup __result)
+        {
+            if(ModSettings.modAutosaveMapping.ContainsKey(reason))
+            {
+                if (ModSettings.modAutosaveMapping[reason] != __result)
+                {
+                    Logger.InfoLine(MethodBase.GetCurrentMethod());
+                    Logger.Minimal("Reason: " + reason);
+                    Logger.Minimal("SlotGroup expected: " + ModSettings.modAutosaveMapping[reason]);
+                    Logger.Minimal("SlotGroup Actual: " + __result);
+                    Logger.EndLine();
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(TurnDirector), "IncrementActiveTurnActor")]
+    public class TurnDirector_IncrementActiveTurnActor_Patch_Debug
+    {
+        private static void Postfix(TurnDirector __instance)
+        {
+            bool playerTeamTurn = __instance.ActiveTurnActor.GUID == __instance.Combat.LocalPlayerTeamGuid;
+     
+            if (playerTeamTurn && (TurnDirector_IncrementActiveTurnActor_Patch.lastRound > __instance.CurrentRound))
+            {
+                Logger.InfoLine(MethodBase.GetCurrentMethod());
+                Logger.Minimal("Should try to save");
+                Logger.EndLine();
             }
         }
     }
