@@ -12,7 +12,6 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
     {
         public static void Postfix(MainMenu __instance)
         {
-            
         }
     }
 
@@ -23,17 +22,17 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
         {
             if (!__result)
             {
-               // DebugHelper.LogGameInstanceCanSave(__instance, reason);
+                // DebugHelper.LogGameInstanceCanSave(__instance, reason);
             }
         }
     }
-    
+
     [HarmonyPatch(typeof(CombatGameState), "CanSave")]
     public class CombatGameState_Save_Patch_Debug
     {
         static void Postfix(CombatGameState __instance, bool __result)
         {
-            if(!__result)
+            if (!__result)
             {
                 DebugHelper.LogCombatGameStateCanSave(__instance);
             }
@@ -45,13 +44,13 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
     {
         public static void Postfix(SaveReason reason, SlotGroup __result)
         {
-            if(ModSettings.modAutosaveMapping.ContainsKey(reason))
+            if (ModSettings.AutosaveMapping.ContainsKey(reason))
             {
-                if (ModSettings.modAutosaveMapping[reason] != __result)
+                if (ModSettings.AutosaveMapping[reason] != __result)
                 {
                     Logger.InfoLine(MethodBase.GetCurrentMethod());
                     Logger.Minimal("Reason: " + reason);
-                    Logger.Minimal("SlotGroup expected: " + ModSettings.modAutosaveMapping[reason]);
+                    Logger.Minimal("SlotGroup expected: " + ModSettings.AutosaveMapping[reason]);
                     Logger.Minimal("SlotGroup Actual: " + __result);
                     Logger.EndLine();
                 }
@@ -65,7 +64,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
         private static void Postfix(TurnDirector __instance)
         {
             bool playerTeamTurn = __instance.ActiveTurnActor.GUID == __instance.Combat.LocalPlayerTeamGuid;
-     
+
             if (playerTeamTurn && (TurnDirector_IncrementActiveTurnActor_Patch.lastRound > __instance.CurrentRound))
             {
                 Logger.InfoLine(MethodBase.GetCurrentMethod());

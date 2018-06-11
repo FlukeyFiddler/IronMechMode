@@ -8,15 +8,16 @@ namespace nl.flukeyfiddler.bt.IronMechMode
 {
     public class IronMechMode
     {
+        public static HarmonyInstance harmony; 
+
         public static void Init(string modDirectory, string settingsJSON)
         {
-            var harmony = HarmonyInstance.Create("nl.flukeyfiddler.bt.IronMechMode");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-            
+            harmony = HarmonyInstance.Create("nl.flukeyfiddler.bt.IronMechMode");
+            ModSettings.UpdateSettingsFromJSON(settingsJSON);
+
             Logger.SetLogFilePath(new LogFilePath(Path.Combine(modDirectory, "Log.txt")));
             Logger.GameStarted();
-
-            ModSettings.UpdateSettingsFromJSON(settingsJSON);
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
 }

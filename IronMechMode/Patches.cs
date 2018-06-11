@@ -4,12 +4,41 @@ using BattleTech.UI;
 using Harmony;
 using nl.flukeyfiddler.bt.IronMechMode.Util;
 using nl.flukeyfiddler.bt.IronMechMode.Util.Debug;
+using nl.flukeyfiddler.bt.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
 namespace nl.flukeyfiddler.bt.IronMechMode
 {
+    [HarmonyPatch(typeof(SimGameState))]
+    public class SimGameState_Ctor_Patch
+    {
+        public static void Postfix(SimGameState __instance)
+        {
+            Logger.Line("in SimGameState Ctor");
+            ModSettings.InstantiateAutoSavePatches(__instance);
+            
+            foreach (object classInstance in ModSettings.AutosavePatches.Keys)
+            {
+                foreach (KeyValuePair<MethodName, ShouldSaveCondition> patchParams in ModSettings.AutosavePatches[classInstance])
+                {
+                    if (patchParams.Value.ShouldSave(classInstance))
+                    {
+                        MethodInfo targetMethod = Traverse.Create(classInstance).GetType().GetMethod(patchParams.Key.ToString());
+                        Logger.Line("targetMethod name: " + targetMethod.Name);
+                        MethodInfo patchMethod = typeof(Helper).GetMethod("TriggerSimGameAutosave");
+                        Logger.Line("mehthod of patch class: " + patchMethod.Name);
+
+                        Logger.Line(String.Format("should patch {0} using {1}", targetMethod.Name, patchMethod.Name));
+
+                        IronMechMode.harmony.Patch(targetMethod, null, new HarmonyMethod(patchMethod));
+                    }
+                }
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(GameInstance), "CanSave")]
     public class GameInstance_CanSave_Patch
     {
@@ -18,12 +47,12 @@ namespace nl.flukeyfiddler.bt.IronMechMode
             if (reason == SaveReason.MANUAL)
             {
                 __result = false;
-            }           
+            }
         }
     }
 
-   [HarmonyPatch(typeof(TurnDirector), "IncrementActiveTurnActor")]
-   public static class TurnDirector_IncrementActiveTurnActor_Patch
+    [HarmonyPatch(typeof(TurnDirector), "IncrementActiveTurnActor")]
+    public static class TurnDirector_IncrementActiveTurnActor_Patch
     {
         public static int lastRound = 0;
 
@@ -34,23 +63,18 @@ namespace nl.flukeyfiddler.bt.IronMechMode
 
         private static void Postfix(TurnDirector __instance)
         {
-            /*
-            bool newRoundInBattle = __instance.CurrentPhase == __instance.FirstPhase;
-            // When not in a battle, the currentPhase is always 5 while first is 1
-            bool newRoundOutsideOfBattle = __instance.CurrentPhase == __instance.LastPhase;
-           */
             bool playerTeamTurn = __instance.ActiveTurnActor.GUID == __instance.Combat.LocalPlayerTeamGuid;
 
             if (playerTeamTurn && __instance.CurrentRound > lastRound)
             {
-                __instance.Combat.BattleTechGame.Save(ModSettings.COMBAT_AUTOSAVE_REASON, false);
+                __instance.Combat.BattleTechGame.Save(ModSettings.COMBATGAME_AUTOSAVE_REASON, false);
                 SetRound(__instance.CurrentRound);
             }
         }
     }
 
     [HarmonyPatch(typeof(SlotModel), "_GetDisplayText")]
-    public class  SlotModel_GetDisplayText_Patch
+    public class SlotModel_GetDisplayText_Patch
     {
         static bool Prefix(SlotModel __instance, ref string __result)
         {
@@ -65,7 +89,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode
     {
         static void Prefix(SaveReason reason, ref Dictionary<SaveReason, SlotGroup> ___mapping)
         {
-            foreach(KeyValuePair<SaveReason, SlotGroup> _override in ModSettings.modAutosaveMapping)
+            foreach (KeyValuePair<SaveReason, SlotGroup> _override in ModSettings.AutosaveMapping)
             {
                 ___mapping[_override.Key] = _override.Value;
             }

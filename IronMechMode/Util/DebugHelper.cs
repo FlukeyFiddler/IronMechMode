@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using BattleTech.Save.SaveGameStructure;
 using Harmony;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -51,7 +52,11 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
             
         }
 
-       
+        internal static void MessageCenterMessageReceived(MessageCenterMessage message)
+        {
+            Logger.Line("Message received of type: " + message.MessageType + ", autosave should be triggered");
+        }
+
         public static void LogGameInstanceCanSave(GameInstance __instance, SaveReason reason)
         {
             List<string> debugLines = new List<string>();
@@ -78,7 +83,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
 
             Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
         }
-        
+
         public static void LogStackManagerCanSave(StackManager stackmanager)
         {
             List<IStackSequence> SequenceStack = Traverse.Create(stackmanager).Property("SequenceStack").GetValue<List<IStackSequence>>();
