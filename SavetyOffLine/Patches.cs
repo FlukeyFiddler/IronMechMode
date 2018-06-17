@@ -1,12 +1,8 @@
 ﻿using BattleTech;
-using BattleTech.Framework;
-using BattleTech.Save;
 using BattleTech.Save.SaveGameStructure;
-using BattleTech.Save.Test;
 using BattleTech.UI;
 using Harmony;
 using nl.flukeyfiddler.bt.SavetyOffLine.Util;
-using nl.flukeyfiddler.bt.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -47,8 +43,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         static bool Prefix(SlotModel __instance, ref string __result)
         {
-            string debugSaveReason = __instance.SaveReason.ToString();
-            __result = __instance.SaveReason.ToString();
+            __result = "S.O.L. save";
             return false;
         }
     }
@@ -70,8 +65,8 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         public static void Postfix(ref Dictionary<SlotGroup, SlotGrouping> __result)
         {
-            __result[ModSettings.AUTOSAVES_GROUP] = new SlotGrouping(ModSettings.settings.MaxAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
-            __result[ModSettings.CHECKPOINTSAVES_GROUP] = new SlotGrouping(ModSettings.settings.MaxCheckpointSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
+            __result[ModSettings.AUTOSAVES_GROUP] = new SlotGrouping(ModSettings.settings.CombatGameAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
+            __result[ModSettings.CHECKPOINTSAVES_GROUP] = new SlotGrouping(ModSettings.settings.SimGameAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
         }
     }
 
@@ -88,7 +83,6 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         public static void Postfix(ref List<SlotModel> __result)
         {
-            __result.Reverse();
             __result.RemoveRange(1, __result.Count - 1);
         }
     }
@@ -109,7 +103,6 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         protected static void Prefix(SGSaveGameListView __instance, ref SGSaveGameListViewItem row)
         {
-            // Disable loading by clicking on the row
             row.SetState(ButtonState.Disabled);
         }
     }
@@ -135,160 +128,30 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
         }
     }
 
-
-        /*
-        [HarmonyPatch(typeof(MainMenu), "EnableLoadButtonIfSaves")]
-        public class MainMenu_EnableLoadButtonIfSaves_Patch
+    [HarmonyPatch(typeof(SimGameOptionsMenu), "QuitPopup")]
+    public class SimGameOptionsMenu_QuitPopup_Patch
+    {
+        private static bool Prefix(SimGameOptionsMenu __instance, Action quitAction)
         {
-            private static void Postfix(ref HBSButton button)
-            {
-                button.SetState(ButtonState.Disabled);
-            }
-        }
-        */
-        /*
-        [HarmonyPatch(typeof(SimGameState), "Dehydrate")]
-        public class SimGameState_Dehydrate_Patch
-        {
-            public static void Prefix(SimGameState __instance, SimGameSave save, ref SerializableReferenceContainer references)
-            {
-                Contract selectedContract = __instance.SelectedContract;
-                // TODO check we're in simGame, not combat!
-                if (selectedContract == null || __instance.BattleTechGame.Combat != null)
-                    return;
+            if (UnityGameInstance.BattleTechGame.IsMultiplayer)
+                return true;
 
-                LanceConfiguration lastLance = Traverse.Create(__instance).Method("GetLastLance").GetValue<LanceConfiguration>();
+            MessageCenter messageCenter = Traverse.Create(__instance).Field("messageCenter").GetValue<MessageCenter>();
 
-                selectedContract.SetLanceConfiguration(lastLance);
-                selectedContract.SetCarryOverNegotationValues(true);
-                selectedContract.Accept(true);
-                selectedContract.Override.disableNegotations = true;
-
-                Contract travelContract = createTravelContract(selectedContract);
-                Logger.Minimal("created travelcontract with name: " + travelContract.Name);
-                __instance.PrepareBreadcrumb(travelContract);
-                // __instance.SetSelectedContract(travelContract, true);
-                //references.AddItem(ModSettings.MOD_SAVE_REFERENCECONTAINER_KEY, travelContract);
-                //references.AddItem("activeBreadcrumb", travelContract);
-                Logger.Minimal("saving selected contract: " + travelContract.GUID);
-                //references.AddItemList<Contract>("globalContracts", new List<Contract>() { selectedContract });
-                //this.globalContracts = globalReferences.GetItemList<Contract>("globalContracts");
-
-            }
-
-            private static Contract createTravelContract(Contract oldContract)
-            {
-
-                // string mapName, string mapPath, string encounterGuid, 
-                // ContractType contractType, ContractOverride ovr, GameContext context, 
-                // Faction employer, Faction target, 
-                // Faction ally, bool isGlobal, int difficulty
-                Type[] createTravelContractParamTypes = new Type[] {
-                    typeof(string), typeof(string), typeof(string), typeof(ContractType),
-                    typeof(ContractOverride), typeof(GameContext), typeof(Faction), typeof(Faction),
-                    typeof(Faction), typeof(bool), typeof(int)
-                };
-
-                object[] createTravelContractArguments = new object[] {
-                    oldContract.mapName, oldContract.mapPath, oldContract.encounterObjectGuid,
-                    oldContract.ContractType, oldContract.Override, oldContract.GameContext,
-                    oldContract.TeamFactions[CombatTeamFactionGuids.employer], oldContract.TeamFactions[CombatTeamFactionGuids.target], 
-                    oldContract.TeamFactions[CombatTeamFactionGuids.targetsAlly], true, oldContract.Difficulty
-                };
-
-                Contract contract = Traverse.Create(oldContract.BattleTechGame.Simulation).
-                    Method("CreateTravelContract", createTravelContractParamTypes).GetValue<Contract>(createTravelContractArguments);
-                return contract;
-            }
-        }
-        */
-        /*
-        [HarmonyPatch(typeof(SimGameState), "Rehydrate")]
-        public class SimGameState_Rehydrate_Patch
-        {
-            public static void Postfix(SimGameState __instance, GameInstanceSave gameInstanceSave)
-            {
-
-                SimGameSave save = gameInstanceSave.SimGameSave;
-
-
-                if (!save.GlobalReferences.HasItem(ModSettings.MOD_SAVE_REFERENCECONTAINER_KEY))
-                    return;
-
-                Contract selectedContract = save.GlobalReferences.GetItem<Contract>(ModSettings.MOD_SAVE_REFERENCECONTAINER_KEY);
-                if (selectedContract == null)
-                    return;
-               // __instance.SetSelectedContract(selectedContract);
-
-                //Traverse.Create(__instance).Field("activeBreadcrumb").SetValue(selectedContract);
-                Logger.Minimal("loaded selected Contract: " + selectedContract.Name);
-                Logger.Minimal("selected contract accepted: " + selectedContract.Accepted);
-                Logger.Minimal("selected contract can negogiate : " + selectedContract.CanNegotiate);
-                Logger.Minimal("selected contract carry over negotiate values : " + selectedContract.CarryOverNegotationValues);
-                Logger.Minimal("selected contract cbills: " + selectedContract.PercentageContractValue);
-                Logger.Minimal("selected contract salvage: " + selectedContract.PercentageContractSalvage);
-                Logger.Minimal("selected contract rep: " +selectedContract.PercentageContractReputation );
-                //__instance.PrepareBreadcrumb(selectedContract);
-                selectedContract.Accept(true);
-
-            }
-        }
-        */
-        /*
-        [HarmonyPatch(typeof(GameInstance), "Save")]
-        public class GameInstance_Save_Patch
-        {
-            public static void Prefix(GameInstance __instance, SaveReason reason, out Contract __state)
-            {
-                if (reason != SaveReason.SIM_GAME_CONTRACT_ACCEPTED) {
-                    __state = null;
-                    return;
-
-                }
-                 __state = __instance.Simulation.SelectedContract;
-            }
-
-            public static void Postfix(ref GameInstance __instance, SaveReason reason, Contract __state)
-            {
-                if (reason != SaveReason.SIM_GAME_CONTRACT_ACCEPTED)
-                    return;
-
-                SimGameState simGame = __instance.Simulation;
-                Contract selectedContract = __state;
-
-                List<ContractData> contractData = new List<ContractData>();
-
-                foreach (ContractData contract in Traverse.Create(simGame).Field("contractBits").GetValue<List<ContractData>>())
-                {
-                    Logger.Minimal("got me a contractBit");
-                    Logger.Minimal("contract name: " + contract.conName);
-                    if (selectedContract.Name == contract.conName)
+            GenericPopupBuilder.
+                Create("Are you sure you want to quit?", String.Empty).
+                AddButton("Cancel", null, true, null).
+                AddButton("Save & Quit", delegate
                     {
-                        Logger.Minimal("found contract: " + contract.conName);
-                        contractData.Add(contract);
-                    }
-                }
-
-                Traverse.Create(simGame).Field("globalContracts").SetValue(new List<Contract> { selectedContract});
-                Traverse.Create(simGame).Field("contractBits").SetValue(contractData);
-            }
-
-            [HarmonyPatch(typeof(SimGameState), "Rehydrate")]
-            public class SimGameState_Rehydrate_Patch
-            {
-                public static void Postfix(SimGameState __instance, GameInstanceSave gameInstanceSave)
-                {
-                    SimGameSave save = gameInstanceSave.SimGameSave;
-
-                    List<string> debugLines = new List<string>();
-
-                    if(save.ActiveContractName != null)
-                    {
-                        Logger.Minimal("active contract not null");
-                        __instance.SetSelectedContract(save.GlobalContracts[0]);
-                    }
-                }
-            }  
+                        messageCenter.AddFiniteSubscriber(MessageCenterMessageType.BlockSaved, delegate (MessageCenterMessage message)
+                        {
+                            quitAction();
+                            return true;
+                        });
+                        UnityGameInstance.BattleTechGame.Save(ModSettings.SIMGAME_AUTOSAVE_REASON, false);
+                    }, true, null).
+                CancelOnEscape().IsNestedPopupWithBuiltInFader().Render();
+            return false;
         }
-        */
     }
+}

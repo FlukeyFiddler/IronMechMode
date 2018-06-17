@@ -14,18 +14,6 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util.Debug
         }
     }
 
-    [HarmonyPatch(typeof(GameInstance), "CanSave")]
-    public class GameInstance_Save_Patch_Debug
-    {
-        static void Postfix(GameInstance __instance, SaveReason reason, bool __result)
-        {
-            if (!__result)
-            {
-                // DebugHelper.LogGameInstanceCanSave(__instance, reason);
-            }
-        }
-    }
-
     [HarmonyPatch(typeof(CombatGameState), "CanSave")]
     public class CombatGameState_Save_Patch_Debug
     {
@@ -71,54 +59,5 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util.Debug
                 Logger.EndLine();
             }
         }
-    }
-
-    /*
-    [HarmonyPatch(typeof(SimGameState), "Dehydrate")]
-    public class SimGameState_Dehydrate_Patch_Debug
-    {
-        public static void Prefix(SimGameState __instance, SimGameSave save,
-            List<Contract> ___globalContracts, List<ContractData> ___contractBits)
-        {
-            List<string> debugLines = new List<string>();
-            debugLines.Add("Dehydrate");
-            debugLines.Add("Active contract name: " + __instance.SaveActiveContractName);
-            debugLines.Add("global contracts: " + ___globalContracts.Count);
-            debugLines.Add("contract bits: " + ___contractBits.Count);
-            Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
-        }
-    }
-
-    [HarmonyPatch(typeof(SimGameState), "Rehydrate")]
-    public class SimGameState_Rehydrate_Patch_Debug
-    {
-        public static void Postfix(SimGameState __instance, GameInstanceSave gameInstanceSave)
-        {
-            SimGameSave save = gameInstanceSave.SimGameSave;
-
-            List<string> debugLines = new List<string>();
-
-            debugLines.Add("Rehydrate");
-            debugLines.Add("Active contract name: " + save.ActiveContractName);
-            debugLines.Add("contract bits: " + save.ContractBits.Count);
-            Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
-        }
-    }
-    */
+    }      
 }
-
-
-/*
- * BattleTech.Save.SaveGameStructure.Messages
- * BattleTech.CombatGameState.CanSave
- * BattleTech.SimGameState.CanSave
- * BattleTech.CombatGameState.Update() if F10 pressed
- * BattleTech.CombatGameState.TriggerAutosaving
- * BattleTech.Save.SaveGameStructure.SlotModel.GetDisplayText()
- * BattleTech.Save.SaveGameStructure.SlotGrouping(int maxSaves, SlotGroupFullBehaviour behaviour)
- * BattleTech.Save.SaveGameStructure.SlotGroupingParametersMapping maxSaves is set here
- * 
- * classtype BattleTech.Save.SaveGameStructure.SaveReason
- * SlotGroup.AutoSaves_1,
- * BattleTech.UI.SimGameOptionsMenu.ReceiveButtonPress -->
- */

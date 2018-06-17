@@ -1,12 +1,10 @@
 ﻿{
     "Name": "SavetyOffLine",
     "Enabled": true,
-    "Version": "0.1.0",
+    "Version": "0.5.0",
     "Description": "S.O.L. - SavetyOffLine",
     "Author": "FlukeyFiddler",
     "Website": "http://www.github.com/FlukeyFiddler/SavetyOffLine",
     "DLL": "SavetyOffLine.dll",
-    "Settings": {
-        "MaxManualReloadsPerGame": 4
-    }
+    "Settings": { }
 }
