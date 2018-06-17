@@ -144,7 +144,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         public static void Postfix(SimGameState __instance, GameInstanceSave gameInstanceSave)
         {
-            /*
+            
             SimGameSave save = gameInstanceSave.SimGameSave;
 
 
@@ -166,7 +166,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
             Logger.Minimal("selected contract rep: " +selectedContract.PercentageContractReputation );
             //__instance.PrepareBreadcrumb(selectedContract);
             selectedContract.Accept(true);
-            */
+            
         }
     }
     */
