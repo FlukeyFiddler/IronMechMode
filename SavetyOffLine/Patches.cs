@@ -4,12 +4,12 @@ using BattleTech.Save;
 using BattleTech.Save.SaveGameStructure;
 using BattleTech.Save.Test;
 using Harmony;
-using nl.flukeyfiddler.bt.IronMechMode.Util;
+using nl.flukeyfiddler.bt.SavetyOffLine.Util;
 using nl.flukeyfiddler.bt.Utils;
 using System;
 using System.Collections.Generic;
 
-namespace nl.flukeyfiddler.bt.IronMechMode
+namespace nl.flukeyfiddler.bt.SavetyOffLine
 {
     [HarmonyPatch(typeof(GameInstance), "CanSave")]
     public class GameInstance_CanSave_Patch

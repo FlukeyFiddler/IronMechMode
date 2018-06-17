@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace nl.flukeyfiddler.bt.IronMechMode.Util
+namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
 {
     public abstract class ShouldSaveCondition
     {

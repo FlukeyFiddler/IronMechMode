@@ -1,12 +1,10 @@
 ﻿using BattleTech;
-using BattleTech.Save;
 using BattleTech.Save.SaveGameStructure;
 using BattleTech.UI;
 using Harmony;
-using System.Collections.Generic;
 using System.Reflection;
 
-namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
+namespace nl.flukeyfiddler.bt.SavetyOffLine.Util.Debug
 {
     [HarmonyPatch(typeof(MainMenu), "HandleEscapeKeypress")]
     public class MainMenu_HandleEscapeKeyPress_Patch_Debug

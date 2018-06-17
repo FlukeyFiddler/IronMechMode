@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace nl.flukeyfiddler.bt.IronMechMode.Util
+namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
 {
     public static class Logger
     {

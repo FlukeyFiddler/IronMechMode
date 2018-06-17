@@ -1,12 +1,10 @@
 ﻿using BattleTech;
 using BattleTech.Save.SaveGameStructure;
 using Harmony;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 
-namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
+namespace nl.flukeyfiddler.bt.SavetyOffLine.Util.Debug
 {
     public static class DebugHelper
     {

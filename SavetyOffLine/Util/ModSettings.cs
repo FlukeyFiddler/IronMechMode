@@ -1,13 +1,9 @@
-﻿using BattleTech;
-using BattleTech.Save.SaveGameStructure;
-using Harmony;
+﻿using BattleTech.Save.SaveGameStructure;
 using Newtonsoft.Json;
-using nl.flukeyfiddler.bt.Utils;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
-namespace nl.flukeyfiddler.bt.IronMechMode.Util
+namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
 {
     public class ModSettings
     {
