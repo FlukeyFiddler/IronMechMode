@@ -18,6 +18,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode
             Logger.SetLogFilePath(new LogFilePath(Path.Combine(modDirectory, "Log.txt")));
             Logger.GameStarted();
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
         }
     }
 }

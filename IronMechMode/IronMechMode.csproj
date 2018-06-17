@@ -59,7 +59,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper.cs" />
     <Compile Include="Util\ShouldSaveConditions.cs" />
     <Compile Include="Util\DebugPatches.cs" />
     <Compile Include="Patches.cs" />

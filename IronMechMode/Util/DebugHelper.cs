@@ -29,18 +29,17 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
                 }
             }
 
-            if (flag2 && flag && !flag3 && !isTutorial)
-                return;
-
-                string[] lines = new string[]
-                {
-                    "flag (is this the active team?): " + flag,
-                    "flag2 (what's the bool in the stackManager?): " + flag2,
-                    "!flag3 (has any unit in the Local Player team begun activivation" +
-                        " and has it not activated this round?): " + !flag3,
-                    "!isTutorial: " + !isTutorial,
-                    "sum of flag2 && flag && !flag3 && !isTutorial: " + (flag2 && flag && !flag3 && !isTutorial)
-                };
+            if (flag2 && flag && !flag3 && !isTutorial) { return; }
+                
+            string[] lines = new string[]
+            {
+                "flag (is this the active team?): " + flag,
+                "flag2 (what's the bool in the stackManager?): " + flag2,
+                "!flag3 (has any unit in the Local Player team begun activivation" +
+                    " and has it not activated this round?): " + !flag3,
+                "!isTutorial: " + !isTutorial,
+                "sum of flag2 && flag && !flag3 && !isTutorial: " + (flag2 && flag && !flag3 && !isTutorial)
+            };
             Logger.Block(lines, MethodBase.GetCurrentMethod());
 
             
@@ -49,7 +48,6 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
                 Logger.Minimal("flag 2 (stackmanager) is false");
                 LogStackManagerCanSave(__instance.StackManager);
             }
-            
         }
 
         internal static void MessageCenterMessageReceived(MessageCenterMessage message)

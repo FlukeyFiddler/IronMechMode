@@ -1,4 +1,5 @@
 ﻿using BattleTech;
+using BattleTech.Save;
 using BattleTech.Save.SaveGameStructure;
 using BattleTech.UI;
 using Harmony;
@@ -61,7 +62,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
     [HarmonyPatch(typeof(TurnDirector), "IncrementActiveTurnActor")]
     public class TurnDirector_IncrementActiveTurnActor_Patch_Debug
     {
-        private static void Postfix(TurnDirector __instance)
+        private static void Prefix(TurnDirector __instance)
         {
             bool playerTeamTurn = __instance.ActiveTurnActor.GUID == __instance.Combat.LocalPlayerTeamGuid;
 
@@ -71,6 +72,21 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
                 Logger.Minimal("Should try to save");
                 Logger.EndLine();
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(SimGameState), "Dehydrate")]
+    public class SimGameState_Dehydrate_Patch_Debug
+    {
+        public static void Prefix(SimGameState __instance, SimGameSave save,
+            List<Contract> ___globalContracts, List<ContractData> ___contractBits)
+        {
+            List<string> debugLines = new List<string>();
+            debugLines.Add("Dehydrate");
+            debugLines.Add("Active contract name: " + __instance.SaveActiveContractName);
+            debugLines.Add("global contracts: " + ___globalContracts.Count);
+            debugLines.Add("contract bits: " + ___contractBits.Count);
+            Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
         }
     }
 }

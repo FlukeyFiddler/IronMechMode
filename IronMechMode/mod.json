@@ -1,7 +1,6 @@
 ﻿{
     "Name": "IronMechMode",
-    "Enabled": true,
-
+    "Enabled": false,
     "Version": "0.1.0",
     "Description": "Saving is not a given!",
     "Author": "FlukeyFiddler",

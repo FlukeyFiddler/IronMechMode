@@ -1,4 +1,6 @@
 ﻿using BattleTech;
+using BattleTech.Framework;
+using BattleTech.Save;
 using BattleTech.Save.SaveGameStructure;
 using BattleTech.UI;
 using Harmony;
@@ -11,34 +13,6 @@ using System.Reflection;
 
 namespace nl.flukeyfiddler.bt.IronMechMode
 {
-    [HarmonyPatch(typeof(SimGameState))]
-    public class SimGameState_Ctor_Patch
-    {
-        public static void Postfix(SimGameState __instance)
-        {
-            Logger.Line("in SimGameState Ctor");
-            ModSettings.InstantiateAutoSavePatches(__instance);
-            
-            foreach (object classInstance in ModSettings.AutosavePatches.Keys)
-            {
-                foreach (KeyValuePair<MethodName, ShouldSaveCondition> patchParams in ModSettings.AutosavePatches[classInstance])
-                {
-                    if (patchParams.Value.ShouldSave(classInstance))
-                    {
-                        MethodInfo targetMethod = Traverse.Create(classInstance).GetType().GetMethod(patchParams.Key.ToString());
-                        Logger.Line("targetMethod name: " + targetMethod.Name);
-                        MethodInfo patchMethod = typeof(Helper).GetMethod("TriggerSimGameAutosave");
-                        Logger.Line("mehthod of patch class: " + patchMethod.Name);
-
-                        Logger.Line(String.Format("should patch {0} using {1}", targetMethod.Name, patchMethod.Name));
-
-                        IronMechMode.harmony.Patch(targetMethod, null, new HarmonyMethod(patchMethod));
-                    }
-                }
-            }
-        }
-    }
-
     [HarmonyPatch(typeof(GameInstance), "CanSave")]
     public class GameInstance_CanSave_Patch
     {
@@ -56,19 +30,15 @@ namespace nl.flukeyfiddler.bt.IronMechMode
     {
         public static int lastRound = 0;
 
-        public static void SetRound(int currentRound)
-        {
-            lastRound = currentRound;
-        }
-
         private static void Postfix(TurnDirector __instance)
         {
             bool playerTeamTurn = __instance.ActiveTurnActor.GUID == __instance.Combat.LocalPlayerTeamGuid;
 
             if (playerTeamTurn && __instance.CurrentRound > lastRound)
             {
+                lastRound = __instance.CurrentRound;
+
                 __instance.Combat.BattleTechGame.Save(ModSettings.COMBATGAME_AUTOSAVE_REASON, false);
-                SetRound(__instance.CurrentRound);
             }
         }
     }
@@ -103,6 +73,54 @@ namespace nl.flukeyfiddler.bt.IronMechMode
         {
             __result[ModSettings.AUTOSAVES_GROUP] = new SlotGrouping(ModSettings.settings.MaxAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
             __result[ModSettings.CHECKPOINTSAVES_GROUP] = new SlotGrouping(ModSettings.settings.MaxCheckpointSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
+        }
+    }
+
+    [HarmonyPatch(typeof(CombatGameState), "OnCombatGameDestroyed")]
+    public class CombatGameState_OnCombatGameDestroyed_Patch
+    {
+        public static void Postfix() {
+            TurnDirector_IncrementActiveTurnActor_Patch.lastRound = 0;
+        }
+    }
+
+
+    [HarmonyPatch(typeof(GameInstance), "Save")]
+    public class GameInstance_Save_Patch
+    {
+        public static void Prefix(GameInstance __instance, SaveReason reason, out Contract __state)
+        {
+            if (reason != SaveReason.SIM_GAME_CONTRACT_ACCEPTED) {
+                __state = null;
+                return;
+
+            }
+             __state = __instance.Simulation.SelectedContract;
+        }
+
+        public static void Postfix(ref GameInstance __instance, SaveReason reason, Contract __state)
+        {
+            if (reason != SaveReason.SIM_GAME_CONTRACT_ACCEPTED)
+                return;
+
+            SimGameState simGame = __instance.Simulation;
+            Contract selectedContract = __state;
+            Logger.Minimal("selected Contract: " + selectedContract.Name);
+            List<ContractData> contractData = new List<ContractData>();
+
+            foreach (ContractData contract in Traverse.Create(simGame).Field("contractBits").GetValue<List<ContractData>>())
+            {
+                Logger.Minimal("got me a contractBit");
+                Logger.Minimal("contract name: " + contract.conName);
+                if (selectedContract.Name == contract.conName)
+                {
+                    Logger.Minimal("found contract: " + contract.conName);
+                    contractData.Add(contract);
+                }
+            }
+
+            Traverse.Create(simGame).Field("globalContracts").SetValue(new List<Contract> { selectedContract});
+            Traverse.Create(simGame).Field("contractBits").SetValue(contractData);
         }
     }
 }
