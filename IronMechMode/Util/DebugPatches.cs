@@ -75,6 +75,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
         }
     }
 
+    /*
     [HarmonyPatch(typeof(SimGameState), "Dehydrate")]
     public class SimGameState_Dehydrate_Patch_Debug
     {
@@ -89,6 +90,23 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util.Debug
             Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
         }
     }
+
+    [HarmonyPatch(typeof(SimGameState), "Rehydrate")]
+    public class SimGameState_Rehydrate_Patch_Debug
+    {
+        public static void Postfix(SimGameState __instance, GameInstanceSave gameInstanceSave)
+        {
+            SimGameSave save = gameInstanceSave.SimGameSave;
+
+            List<string> debugLines = new List<string>();
+
+            debugLines.Add("Rehydrate");
+            debugLines.Add("Active contract name: " + save.ActiveContractName);
+            debugLines.Add("contract bits: " + save.ContractBits.Count);
+            Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
+        }
+    }
+    */
 }
 
 

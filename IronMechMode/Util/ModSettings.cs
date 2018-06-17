@@ -15,6 +15,7 @@ namespace nl.flukeyfiddler.bt.IronMechMode.Util
         public const SlotGroup AUTOSAVES_GROUP = SlotGroup.AutoSaves_1;
         public const SaveReason COMBATGAME_AUTOSAVE_REASON = SaveReason.COMBAT_GAME_DESIGNER_TRIGGER;
         public const SaveReason SIMGAME_AUTOSAVE_REASON = SaveReason.SIM_GAME_EVENT_FIRED;
+        public const string MOD_SAVE_REFERENCECONTAINER_KEY = "SOLAcceptedContract";
 
         public static Dictionary<SaveReason, SlotGroup> AutosaveMapping =
             new Dictionary<SaveReason, SlotGroup>() {
