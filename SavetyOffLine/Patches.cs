@@ -41,10 +41,18 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     [HarmonyPatch(typeof(SlotModel), "_GetDisplayText")]
     public class SlotModel_GetDisplayText_Patch
     {
-        static bool Prefix(SlotModel __instance, ref string __result)
+        static void Postfix(SlotModel __instance, ref string __result)
         {
-            __result = "S.O.L. save";
-            return false;
+            __result = "S.O.L. " ;
+
+            SaveReason saveReason = __instance.SaveReason;
+            var autosaveMapping = ModSettings.AutosaveMapping;
+
+            if (autosaveMapping.ContainsKey(saveReason))
+            {
+                __result += (autosaveMapping[saveReason] == ModSettings.COMBATGAME_SAVES_GROUP) ?
+                    "Combat Autosave" : "Sim Autosave";
+            }
         }
     }
 
@@ -65,8 +73,8 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         public static void Postfix(ref Dictionary<SlotGroup, SlotGrouping> __result)
         {
-            __result[ModSettings.AUTOSAVES_GROUP] = new SlotGrouping(ModSettings.settings.CombatGameAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
-            __result[ModSettings.CHECKPOINTSAVES_GROUP] = new SlotGrouping(ModSettings.settings.SimGameAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
+            __result[ModSettings.COMBATGAME_SAVES_GROUP] = new SlotGrouping(ModSettings.settings.CombatGameAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
+            __result[ModSettings.SIMGAME_SAVES_GROUP] = new SlotGrouping(ModSettings.settings.SimGameAutoSaves, SlotGroupFullBehavior.AUTO_OVERWRITE_OLDEST);
         }
     }
 
