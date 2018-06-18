@@ -120,9 +120,6 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         public static void Postfix(ref SGSaveGameSlotsPanel __instance, SlotModel slot)
         {
-            if (slot.IsSkirmish)
-                return;
-
             __instance.DisableLoadButton();
         }
     }
