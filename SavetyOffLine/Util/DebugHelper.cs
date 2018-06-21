@@ -41,7 +41,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util.Debug
             Logger.Block(lines, MethodBase.GetCurrentMethod());
 
             
-            if (flag2 == false)
+            if (flag2 == false && !isTutorial)
             {
                 Logger.Minimal("flag 2 (stackmanager) is false");
                 LogStackManagerCanSave(__instance.StackManager);

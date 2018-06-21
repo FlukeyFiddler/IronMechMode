@@ -1,6 +1,9 @@
-﻿using Harmony;
+﻿using BattleTech;
+using Harmony;
 using nl.flukeyfiddler.bt.SavetyOffLine.Util;
 using nl.flukeyfiddler.bt.Utils.Logger;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -8,7 +11,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
 {
     public class SavetyOffLine
     {
-        public static HarmonyInstance harmony; 
+        public static HarmonyInstance harmony;
 
         public static void Init(string modDirectory, string settingsJSON)
         {
@@ -18,7 +21,6 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
             Logger.SetLogFilePath(new LogFilePath(Path.Combine(modDirectory, "Log.txt")));
             Logger.GameStarted();
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-
         }
     }
 }

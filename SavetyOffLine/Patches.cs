@@ -5,9 +5,21 @@ using Harmony;
 using nl.flukeyfiddler.bt.SavetyOffLine.Util;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace nl.flukeyfiddler.bt.SavetyOffLine
 {
+    [HarmonyPatch(typeof(SimGameState), "OnHeadlessCompleteListner")]
+    public class SimGameState_Init_Patch
+    {
+        private static void Postfix(SimGameState __instance)
+        {
+            MethodInfo patchToKeep = AccessTools.Method(typeof(SimGameState), "OnHeadlessCompleteListner");
+
+            EnableOrDisablePatchesHelper.EnableOrDisablePatches(__instance, patchToKeep);
+        }
+    }
+
     [HarmonyPatch(typeof(GameInstance), "CanSave")]
     public class GameInstance_CanSave_Patch
     {
@@ -32,7 +44,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
             if (playerTeamTurn && __instance.CurrentRound > lastRound)
             {
                 lastRound = __instance.CurrentRound;
-
+                
                 __instance.Combat.BattleTechGame.Save(ModSettings.COMBATGAME_AUTOSAVE_REASON, false);
             }
         }
