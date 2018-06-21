@@ -6,7 +6,7 @@ Well, look no further! No seriously, you still here? You don't want this mod!
 This is crazy-ass "Hey let's use a mod that messes with save files in a bug-ridden game and a month-old
 modding community, Yeah! Whoop Whoop!"
 
-S.O.L. aims to give BT a rouge-like experience. It will auto-save during the campaign and in combat and disallow 
+S.O.L. aims to give BT a rogue-like experience. It will auto-save during the campaign and in combat and disallow 
 loading. No save-scumming, no "ah let's try to get those reinforcements too", and maybe even "run awaaaay!" 
 from time to time. 
 
