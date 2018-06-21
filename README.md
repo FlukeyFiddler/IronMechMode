@@ -11,6 +11,9 @@ loading. No save-scumming, no "ah let's try to get those reinforcements too", an
 from time to time. 
 
 ## Changelog 
+- V0.6.0
+	- Disable S.O.L. if vanilla Ironman campaign is played, enable if any other campaign
+	- Differentiate S.O.L. from Ironman on the savegames screen and disable the load button for S.O.L.
 - V0.5.0 (Pre-Release)
 	- Autosaves at the start of each round in combat, deletes saves over 4
 	- Autosaves in simgame left unchanged, deletes saves over 4
