@@ -1,7 +1,11 @@
-﻿using BattleTech.Save.SaveGameStructure;
+﻿using BattleTech;
+using BattleTech.Save.SaveGameStructure;
+using BattleTech.UI;
+using Harmony;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
 {
@@ -27,6 +31,16 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
                 { SaveReason.SIM_GAME_ARRIVED_AT_PLANET, SIMGAME_SAVES_GROUP },
                 { SaveReason.SIM_GAME_BREADCRUMB_COMPLETE, SIMGAME_SAVES_GROUP },
             };
+
+        public static List<MethodBase> patchesToKeepIfIronmanCampaign = new List<MethodBase>() {
+            AccessTools.Method(typeof(SimGameState), "OnHeadlessCompleteListner"),
+            AccessTools.Method(typeof(SlotModel), "_GetDisplayText"),
+            AccessTools.Method(typeof(SGSaveGameListViewItem), "SetData"),
+            AccessTools.Method(typeof(SGSaveGameListView), "OnRowClicked"),
+            AccessTools.Method(typeof(SGSaveGameSlotsPanel), "OnSlotSelected"),
+            AccessTools.Method(typeof(SGSaveGameCampaignListViewItem), "SetData"),
+        };
+
 
         internal static Settings settings = new Settings();
 

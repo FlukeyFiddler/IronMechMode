@@ -9,9 +9,12 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
     {
         private static HarmonyInstance harmony = SavetyOffLine.harmony;
 
-        private static bool patchesPreviouslyDisabled = false;
+       
 
-        public static void EnableOrDisablePatches(SimGameState simGame, MethodBase patchToKeep)
+        public static bool patchesPreviouslyDisabled = false;
+
+
+        public static void EnableOrDisablePatches(SimGameState simGame)
         {
             var ironManCampaignField = Traverse.Create(simGame).Property("IsIronmanCampaign");
 
@@ -24,7 +27,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
             {
                 if (!patchesPreviouslyDisabled)
                 {
-                    disablePatches(patchToKeep);
+                    disablePatches();
                 }
             }
             else if (patchesPreviouslyDisabled)
@@ -42,7 +45,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
-        private static void disablePatches(MethodBase patchToKeep)
+        private static void disablePatches()
         {
             Logger.Line("Disabling SavetyOffLine as this campaign uses IronManMode", MethodBase.GetCurrentMethod());
 
@@ -51,8 +54,11 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util
             List<MethodBase> methodsToRemove = new List<MethodBase>();
 
             foreach (MethodBase patchedMethod in harmony.GetPatchedMethods()) {
-                if (patchedMethod.Name == patchToKeep.Name)
+                if (ModSettings.patchesToKeepIfIronmanCampaign.Contains(patchedMethod))
+                {
+                    Logger.Minimal("not removing: " +patchedMethod.Name);
                     continue;
+                }
 
                 addMethodToRemoveListIfPatchedByMe(patchedMethod, methodsToRemove);
             }

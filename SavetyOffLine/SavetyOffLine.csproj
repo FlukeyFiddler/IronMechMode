@@ -69,6 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\DebugHelper.cs" />
     <Compile Include="Util\EnableOrDisablePatchesHelper.cs" />
+    <Compile Include="Util\Helper.cs" />
     <Compile Include="Util\Logger.cs" />
     <Compile Include="Util\ModSettings.cs" />
   </ItemGroup>

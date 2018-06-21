@@ -6,6 +6,7 @@ using nl.flukeyfiddler.bt.SavetyOffLine.Util;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using TMPro;
 
 namespace nl.flukeyfiddler.bt.SavetyOffLine
 {
@@ -14,9 +15,7 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         private static void Postfix(SimGameState __instance)
         {
-            MethodInfo patchToKeep = AccessTools.Method(typeof(SimGameState), "OnHeadlessCompleteListner");
-
-            EnableOrDisablePatchesHelper.EnableOrDisablePatches(__instance, patchToKeep);
+            EnableOrDisablePatchesHelper.EnableOrDisablePatches(__instance);
         }
     }
 
@@ -55,6 +54,9 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         static void Postfix(SlotModel __instance, ref string __result)
         {
+            if (Helper.IsIronManCampaign(__instance))
+                return;
+
             __result = "S.O.L. " ;
 
             SaveReason saveReason = __instance.SaveReason;
@@ -107,22 +109,41 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
         }
     }
 
+    [HarmonyPatch(typeof(SGSaveGameCampaignListViewItem), "SetData")]
+    public class SGSaveGameCampaignListViewItem_SetData_Patch
+    {
+        public static void Postfix(SGSaveGameCampaignListViewItem __instance, InstanceModel saveGameInstance, 
+            TextMeshProUGUI ___companyNameText)
+        {
+            if (Helper.IsIronManCampaign(saveGameInstance))
+                return;
+
+            ___companyNameText.text += " (S.O.L.)"; 
+        }
+    }
+    
     [HarmonyPatch(typeof(SGSaveGameListViewItem), "SetData")]
     public class SGSaveGameListViewItem_SetData_Patch
     {
-        public static void Postfix(SGSaveGameListViewItem __instance)
+        public static void Postfix(SGSaveGameListViewItem __instance, SlotModel slot)
         {
+            if(Helper.IsIronManCampaign(slot))
+               return;
+
+
             Traverse.Create(__instance).Field("deleteButton").GetValue<HBSButton>().
                 SetState(ButtonState.Disabled);
         }
     }
 
-
     [HarmonyPatch(typeof(SGSaveGameListView), "OnRowClicked")]
     public class SGSaveGameListView_OnRowClicked_Patch
     {
-        protected static void Prefix(SGSaveGameListView __instance, ref SGSaveGameListViewItem row)
+        protected static void Prefix(SGSaveGameListView __instance, ref SGSaveGameListViewItem row, SlotModel data)
         {
+            if (Helper.IsIronManCampaign(data))
+                return;
+
             row.SetState(ButtonState.Disabled);
         }
     }
@@ -132,6 +153,9 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine
     {
         public static void Postfix(ref SGSaveGameSlotsPanel __instance, SlotModel slot)
         {
+            if (Helper.IsIronManCampaign(slot))
+                return;
+
             __instance.DisableLoadButton();
         }
     }

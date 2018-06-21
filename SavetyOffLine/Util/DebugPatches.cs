@@ -37,27 +37,24 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util.Debug
 
         private static void Postfix(SimGameState __instance)
         {
+            debugLines.Add("Checking if Ironman Campaign");
 
-            var isIronManCampaign = Traverse.Create(__instance).Property("IsIronmanCampaign");
-
-            debugLines.Add("Checking for Ironman");
-            debugLines.Add("Field exists: " + isIronManCampaign.FieldExists());
-
-            if (isIronManCampaign.FieldExists())
+            if (Helper.IsIronManCampaign(__instance))
             {
-                debugLines.Add("Is ironMan Campaign: " + isIronManCampaign.GetValue<bool>());
+                debugLines.Add("Is ironMan Campaign ");
 
-                if (isIronManCampaign.GetValue<bool>())
+                if (!EnableOrDisablePatchesHelper.patchesPreviouslyDisabled)
                 {
                     debugLines.Add("Patches after removal: ");
                     SavetyOffLine.harmony.GetPatchedMethods().Do(getPatchedMethods);
                 }
-                else
-                {
-                    debugLines.Add("Not Ironman, patches:");
-                    SavetyOffLine.harmony.GetPatchedMethods().Do(getPatchedMethods);
-                }
             }
+            else if (EnableOrDisablePatchesHelper.patchesPreviouslyDisabled)
+            {
+                debugLines.Add("patches after re-enabling SavetyOffLine:");
+                SavetyOffLine.harmony.GetPatchedMethods().Do(getPatchedMethods);
+            }
+
             Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
             debugLines.Clear();
         }
