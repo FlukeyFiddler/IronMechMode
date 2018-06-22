@@ -51,8 +51,12 @@ namespace nl.flukeyfiddler.bt.SavetyOffLine.Util.Debug
             }
             else if (EnableOrDisablePatchesHelper.patchesPreviouslyDisabled)
             {
-                debugLines.Add("patches after re-enabling SavetyOffLine:");
+                debugLines.Add("Not Ironman, but was previously, patches re-enabled:");
                 SavetyOffLine.harmony.GetPatchedMethods().Do(getPatchedMethods);
+            }
+            else
+            {
+                debugLines.Add("Not Ironman campaign, nor previously");
             }
 
             Logger.Block(debugLines.ToArray(), MethodBase.GetCurrentMethod());
