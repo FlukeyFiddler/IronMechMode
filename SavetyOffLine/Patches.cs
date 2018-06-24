@@ -11,7 +11,7 @@ using TMPro;
 namespace nl.flukeyfiddler.bt.SavetyOffLine
 {
     [HarmonyPatch(typeof(SimGameState), "OnHeadlessCompleteListner")]
-    public class SimGameState_Init_Patch
+    public class SimGameState_OnHeadlessCompleteListner_Patch
     {
         private static void Postfix(SimGameState __instance)
         {

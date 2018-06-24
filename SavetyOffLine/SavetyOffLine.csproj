@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ForceLastContractPatches.cs" />
     <Compile Include="Util\DebugPatches.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="SavetyOffLine.cs" />
